@@ -295,7 +295,7 @@ docs/
 한 번에 한 항목씩 진행한다. 완료하면 체크한다.
 
 ### 1주차 — 기반과 직원 화면
-- [ ] T1. 프로젝트 초기화 (Next.js, TS strict, Tailwind, ESLint, `typecheck` 스크립트)
+- [x] T1. 프로젝트 초기화 (Next.js, TS strict, Tailwind, ESLint, `typecheck` 스크립트)
 - [ ] T2. Supabase 마이그레이션: 테이블, 인덱스, RLS
 - [ ] T3. `submit_reports`, `increment_usage` RPC
 - [ ] T4. 시드 스크립트
