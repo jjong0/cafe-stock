@@ -117,7 +117,7 @@ create table briefings (
 );
 
 create table api_usage (
-  key text not null,                     -- 'session:<id>' 또는 'global'
+  key text not null,                     -- 용도별 키, 6절 참고
   day date not null,
   count int not null default 0,
   primary key (key, day)
@@ -137,11 +137,13 @@ create table api_usage (
 
 ## 6. 호출 제한
 
-| 대상 | 한도 |
-|---|---|
-| 세션당 AI 호출 | 하루 20회 |
-| 전체 AI 호출 | 하루 500회 |
-| 세션당 보고 제출 | 하루 100회 |
+| 대상 | 한도 | `api_usage.key` |
+|---|---|---|
+| 세션당 AI 호출 | 하루 20회 | `ai:session:<id>` |
+| 전체 AI 호출 | 하루 500회 | `ai:global` |
+| 세션당 보고 제출 | 하루 100회 | `report:session:<id>` |
+
+- 키는 용도별로 나눈다. 세션 키를 하나로 쓰면 보고 제출이 AI 호출 한도를 함께 소진한다
 
 - 전체 한도가 실제 비용 보호 장치 (세션 쿠키는 삭제하면 초기화되므로)
 - 초과 시 `429` + `{ error: { code: 'RATE_LIMITED', message } }`
