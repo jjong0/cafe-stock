@@ -297,7 +297,7 @@ docs/
 ### 1주차 — 기반과 직원 화면
 - [x] T1. 프로젝트 초기화 (Next.js, TS strict, Tailwind, ESLint, `typecheck` 스크립트)
 - [x] T2. Supabase 마이그레이션: 테이블, 인덱스, RLS
-- [ ] T3. `submit_reports`, `increment_usage` RPC
+- [x] T3. `submit_reports`, `increment_usage` RPC
 - [ ] T4. 시드 스크립트
 - [ ] T5. `lib/supabase/server.ts`, `lib/session.ts`, `middleware.ts`, `lib/errors.ts`
 - [ ] T6. `GET /api/items`, `POST /api/reports`
