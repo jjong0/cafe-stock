@@ -302,7 +302,7 @@ docs/
 - [x] T2. Supabase 마이그레이션: 테이블, 인덱스, RLS
 - [x] T3. `submit_reports`, `increment_usage` RPC
 - [x] T4. 시드 스크립트
-- [ ] T5. `lib/supabase/server.ts`, `lib/session.ts`, `middleware.ts`, `lib/errors.ts`
+- [x] T5. `lib/supabase/server.ts`, `lib/session.ts`, `proxy.ts`, `lib/errors.ts`
 - [ ] T6. `GET /api/items`, `POST /api/reports`
 - [ ] T7. 직원 화면 UI (카테고리 탭, 품목 그리드, 선택 바, 제출)
 
