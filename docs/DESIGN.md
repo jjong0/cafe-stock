@@ -62,7 +62,7 @@
 
 ## 4. 공개 데모 구조
 
-- 첫 방문 시 `middleware.ts`에서 익명 `session_id` 쿠키(httpOnly, 30일) 발급
+- 첫 방문 시 `src/proxy.ts`에서 익명 `session_id` 쿠키(httpOnly, 30일) 발급
 - 방문자가 만든 보고·이슈·브리핑은 `session_id`로 분리 → 방문자끼리 데이터가 섞이지 않음
 - 공용 시드 데이터는 `session_id = null`, 읽기 전용
 - 화면과 통계는 **시드 데이터 + 현재 세션 데이터**를 합쳐 보여준다
@@ -275,7 +275,8 @@ src/
 │  ├─ briefing/   # facts 집계, 브리핑 카드
 │  └─ stats/      # 질문 입력, aggregate.ts, 차트
 ├─ lib/
-│  ├─ supabase/server.ts
+│  ├─ supabase/server.ts         # service role 클라이언트 (server-only)
+│  ├─ supabase/database.types.ts # npm run db:types로 생성
 │  ├─ ai/
 │  │  ├─ client.ts
 │  │  ├─ prompts.ts
@@ -283,7 +284,7 @@ src/
 │  ├─ session.ts
 │  ├─ rate-limit.ts
 │  └─ errors.ts
-└─ middleware.ts
+└─ proxy.ts                     # Next.js 16에서 middleware.ts → proxy.ts
 supabase/
 └─ migrations/                   # 스키마, RPC
 scripts/
