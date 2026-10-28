@@ -269,6 +269,8 @@ src/
 │     ├─ issues/[id]/route.ts
 │     ├─ briefing/route.ts
 │     └─ stats/query/route.ts
+├─ components/
+│  └─ ui/         # 기능과 무관한 재사용 UI (Button, SegmentedControl, Tag, Toast)
 ├─ features/
 │  ├─ report/     # 품목 그리드, 선택 바, 제출
 │  ├─ issues/     # 이슈 목록, 상태 변경
