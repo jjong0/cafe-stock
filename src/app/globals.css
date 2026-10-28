@@ -1,52 +1,33 @@
 @import "tailwindcss";
 
-/* 카페 바 뒤의 재료에서 가져온 색: 스테인리스 작업대, 감열지 주문표, 마스킹테이프, 품절 도장 */
 @theme {
-  --color-steel: #e3e7e4;
-  --color-steel-deep: #cfd5d1;
-  --color-counter: #ffffff;
-  --color-ink: #1c2320;
-  --color-ink-soft: #56615b;
-  --color-thermal: #fbfbf8;
-  --color-tape: #e9c552;
-  --color-tape-ink: #5a4410;
-  --color-stamp: #c2362b;
+  --color-bg: #ffffff;
+  --color-surface: #f2f4f6;
+  --color-line: #e5e8eb;
+  --color-fg: #191f28;
+  --color-fg-sub: #4e5968;
+  --color-fg-weak: #8b95a1;
+  --color-primary: #191f28;
+  --color-low: #c46200;
+  --color-low-soft: #fff3e0;
+  --color-out: #e0323f;
+  --color-out-soft: #ffebee;
 
-  --font-display: var(--font-do-hyeon), var(--font-plex-sans-kr), sans-serif;
-  --font-sans: var(--font-plex-sans-kr), system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
-
-  --animate-ticket-tear: ticket-tear 380ms cubic-bezier(0.5, 0, 0.75, 0) forwards;
-  --animate-ticket-feed: ticket-feed 260ms cubic-bezier(0.2, 0.8, 0.3, 1);
-
-  @keyframes ticket-tear {
-    to {
-      transform: translateY(-40px) rotate(-1.5deg);
-      opacity: 0;
-    }
-  }
-  @keyframes ticket-feed {
-    from {
-      transform: translateY(24px);
-    }
-  }
-}
-
-/* 감열지를 뜯어낸 톱니 가장자리 */
-@utility ticket-edge {
-  height: 8px;
-  background: var(--color-thermal);
-  mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 16px 100%;
+  /* 폰에 이미 있는 글꼴을 써서 기본 앱처럼 보이고 다운로드도 없다 */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui,
+    sans-serif;
 }
 
 body {
-  background: var(--color-steel);
-  color: var(--color-ink);
+  background: var(--color-bg);
+  color: var(--color-fg);
   font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-ink);
+  outline: 2px solid var(--color-fg);
   outline-offset: 2px;
 }
 
