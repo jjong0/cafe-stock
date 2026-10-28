@@ -23,15 +23,21 @@ export function ItemTile({ item, draftLevel, expanded, onExpand, onCollapse, onC
     if (expanded) firstChoiceRef.current?.focus();
   }, [expanded]);
 
+  // 단톡방 보고의 문제였던 "사장님이 봤는지 모름"을 직원 화면에서 바로 알 수 있게 한다
   const reported = item.openIssue && (
-    <LevelTag level={item.openIssue.level} className="absolute left-2.5 top-2.5" />
+    <span className="absolute left-2.5 top-2.5 flex flex-col items-start gap-1">
+      <LevelTag level={item.openIssue.level} />
+      <span className="text-xs text-ink-soft">
+        {item.openIssue.status === "acknowledged" ? "사장님 확인" : "보고됨"}
+      </span>
+    </span>
   );
 
   if (expanded) {
     return (
       <div
         onKeyDown={(event) => event.key === "Escape" && onCollapse()}
-        className="relative flex min-h-24 w-full flex-col justify-end gap-2 rounded-xl bg-counter p-2 ring-2 ring-ink"
+        className="relative flex min-h-28 w-full flex-col justify-end gap-2 rounded-xl bg-counter p-2 ring-2 ring-ink"
       >
         <p className="truncate px-1 text-sm font-medium text-ink-soft">{item.name}</p>
         <div role="group" aria-label={`${item.name} 상태`} className="flex gap-1.5">
@@ -70,7 +76,7 @@ export function ItemTile({ item, draftLevel, expanded, onExpand, onCollapse, onC
       onClick={onExpand}
       aria-expanded={false}
       className={cx(
-        "relative flex min-h-24 w-full flex-col items-start justify-end rounded-xl bg-counter p-3 text-left transition-shadow",
+        "relative flex min-h-28 w-full flex-col items-start justify-end rounded-xl bg-counter p-3 text-left transition-shadow",
         draftLevel ? "ring-2 ring-ink" : "ring-1 ring-ink/10 hover:ring-ink/30",
       )}
     >

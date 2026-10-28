@@ -9,7 +9,7 @@ export function ItemGridSkeleton() {
       <div className="my-2 h-13 rounded-xl bg-steel-deep" />
       <ul className="grid grid-cols-2 gap-2.5 pt-3 sm:grid-cols-3">
         {Array.from({ length: 6 }, (_, i) => (
-          <li key={i} className="min-h-24 animate-pulse rounded-xl bg-counter/60" />
+          <li key={i} className="min-h-28 animate-pulse rounded-xl bg-counter/60" />
         ))}
       </ul>
     </div>
