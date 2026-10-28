@@ -15,6 +15,28 @@
   --font-display: var(--font-do-hyeon), var(--font-plex-sans-kr), sans-serif;
   --font-sans: var(--font-plex-sans-kr), system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --animate-ticket-tear: ticket-tear 380ms cubic-bezier(0.5, 0, 0.75, 0) forwards;
+  --animate-ticket-feed: ticket-feed 260ms cubic-bezier(0.2, 0.8, 0.3, 1);
+
+  @keyframes ticket-tear {
+    to {
+      transform: translateY(-40px) rotate(-1.5deg);
+      opacity: 0;
+    }
+  }
+  @keyframes ticket-feed {
+    from {
+      transform: translateY(24px);
+    }
+  }
+}
+
+/* 감열지를 뜯어낸 톱니 가장자리 */
+@utility ticket-edge {
+  height: 8px;
+  background: var(--color-thermal);
+  mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 16px 100%;
 }
 
 body {
