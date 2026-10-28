@@ -40,8 +40,23 @@ export type Item = z.infer<typeof ItemSchema>;
 
 export const ItemsResponseSchema = z.object({ items: z.array(ItemSchema) });
 
-export const SubmitReportsResponseSchema = z.object({
-  issues: z.array(
-    z.object({ id: z.uuid(), itemId: z.uuid(), level: LevelSchema, status: z.string(), openedAt: z.string() }),
-  ),
+const SubmittedIssueSchema = z.object({
+  id: z.uuid(),
+  itemId: z.uuid(),
+  level: LevelSchema,
+  status: z.string(),
+  openedAt: z.string(),
 });
+export type SubmittedIssue = z.infer<typeof SubmittedIssueSchema>;
+
+export const SubmitReportsResponseSchema = z.object({ issues: z.array(SubmittedIssueSchema) });
+
+// 브라우저에 저장하는 보낸 보고 기록. 저장소 값도 외부 입력이라 읽을 때 검증한다
+export const SentReportSchema = z.object({
+  id: z.string(),
+  sentAt: z.string(),
+  reporterName: z.string(),
+  memo: z.string().optional(),
+  lines: z.array(z.object({ itemId: z.uuid(), issueId: z.uuid(), name: z.string(), level: LevelSchema })),
+});
+export type SentReport = z.infer<typeof SentReportSchema>;
