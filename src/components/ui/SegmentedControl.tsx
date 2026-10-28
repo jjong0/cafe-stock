@@ -37,7 +37,7 @@ export function SegmentedControl<T extends string>({
   }
 
   return (
-    <div role="radiogroup" aria-label={label} className={cx("flex gap-1 rounded-xl bg-steel-deep p-1", className)}>
+    <div role="radiogroup" aria-label={label} className={cx("flex gap-1 rounded-xl bg-surface p-1", className)}>
       {options.map((option, index) => {
         const selected = option.value === value;
         return (
@@ -55,7 +55,7 @@ export function SegmentedControl<T extends string>({
             className={cx(
               "flex-1 whitespace-nowrap rounded-lg transition-colors",
               size === "sm" ? "h-8 px-3 text-sm" : "h-11 px-3 text-base",
-              selected ? "bg-counter text-ink shadow-[0_1px_2px_rgb(28_35_32/0.12)]" : "text-ink-soft hover:text-ink",
+              selected ? "bg-bg font-semibold text-fg shadow-[0_1px_2px_rgb(0_0_0/0.08)]" : "text-fg-weak",
               optionClassName,
             )}
           >

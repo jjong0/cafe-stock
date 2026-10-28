@@ -31,8 +31,8 @@ export function Toast({ message, onDismiss, durationMs = 3000 }: ToastProps) {
         <div
           key={message.id}
           className={cx(
-            "pointer-events-auto flex max-w-md items-center gap-3 rounded-lg py-2.5 pl-4 text-sm font-medium shadow-lg",
-            persistent ? "bg-stamp pr-1.5 text-white" : "bg-ink pr-4 text-thermal",
+            "pointer-events-auto flex max-w-md items-center gap-3 rounded-xl py-3 pl-4 text-[15px] font-medium",
+            persistent ? "bg-out pr-1.5 text-white" : "bg-fg/90 pr-4 text-white",
           )}
         >
           <p>{message.text}</p>
