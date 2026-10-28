@@ -2,7 +2,7 @@
 export function ItemListSkeleton() {
   return (
     <div aria-busy="true" aria-label="품목을 불러오는 중" className="mx-auto w-full max-w-xl px-4">
-      <div className="flex items-center justify-between pt-5 pb-2">
+      <div className="flex items-center justify-between py-3">
         <div className="h-7 w-24 rounded-md bg-surface" />
         <div className="h-9 w-32 rounded-lg bg-surface" />
       </div>
