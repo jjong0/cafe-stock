@@ -306,7 +306,7 @@ docs/
 - [x] T4. 시드 스크립트
 - [x] T5. `lib/supabase/server.ts`, `lib/session.ts`, `proxy.ts`, `lib/errors.ts`
 - [x] T6. `GET /api/items`, `POST /api/reports`
-- [ ] T7. 직원 화면 UI (카테고리 탭, 품목 그리드, 선택 바, 제출)
+- [x] T7. 직원 화면 UI (카테고리 탭, 품목 그리드, 선택 바, 제출)
 
 ### 2주차 — 사장님 화면과 브리핑
 - [ ] T8. `GET /api/issues`, `PATCH /api/issues/[id]`
