@@ -1,3 +1,4 @@
+import { unstable_rethrow } from "next/navigation";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
@@ -28,6 +29,8 @@ export function errorResponse(code: ErrorCode, message: string, status: number) 
 
 // 라우트의 catch에서 호출한다. 예상하지 못한 오류는 내부 메시지를 숨기고 로그로만 남긴다.
 export function handleRouteError(err: unknown) {
+  // 프리렌더 중 cookies()가 던지는 신호 같은 Next.js 내부 오류는 삼키면 안 되고 그대로 올려야 한다
+  unstable_rethrow(err);
   if (err instanceof AppError) {
     return errorResponse(err.code, err.message, err.status);
   }
