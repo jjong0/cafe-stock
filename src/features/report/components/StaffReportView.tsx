@@ -6,12 +6,11 @@ import { Toast, type ToastMessage } from "@/components/ui/Toast";
 import { ApiClientError } from "@/lib/api-client";
 import { CATEGORY_OPTIONS } from "../constants";
 import { useReportDraft } from "../hooks/useReportDraft";
+import { useReporterName } from "../hooks/useReporterName";
 import { useSubmitReports } from "../hooks/useSubmitReports";
 import { REPORTER_NAMES, type Category, type Item, type Level } from "../schemas";
 import { ItemGrid } from "./ItemGrid";
 import { ReportTicket, type TicketLine } from "./ReportTicket";
-
-type ReporterName = (typeof REPORTER_NAMES)[number];
 
 const REPORTER_OPTIONS = REPORTER_NAMES.map((name) => ({ value: name, label: name }));
 const TEAR_MS = 380;
@@ -19,7 +18,7 @@ const TEAR_MS = 380;
 export function StaffReportView({ initialItems }: { initialItems: Item[] }) {
   const [items, setItems] = useState(initialItems);
   const [category, setCategory] = useState<Category>("bean_milk");
-  const [reporter, setReporter] = useState<ReporterName>("직원A");
+  const [reporter, setReporter] = useReporterName();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [memo, setMemo] = useState("");
   const [tearing, setTearing] = useState(false);
