@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { ItemGridSkeleton } from "@/features/report/components/ItemGridSkeleton";
+import { ItemListSkeleton } from "@/features/report/components/ItemListSkeleton";
 import { StaffReportView } from "@/features/report/components/StaffReportView";
 import { ItemsResponseSchema } from "@/features/report/schemas";
 import { getItemsWithOpenIssues } from "@/features/report/server";
@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "재고 보고 · 직원" };
 export default function StaffPage() {
   return (
     <main className="flex-1">
-      <Suspense fallback={<ItemGridSkeleton />}>
+      <Suspense fallback={<ItemListSkeleton />}>
         <StaffReport />
       </Suspense>
     </main>
