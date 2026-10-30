@@ -5,6 +5,13 @@ import { cx } from "@/lib/cx";
 
 export type ToastMessage = { id: number; text: string; tone: "success" | "error" };
 
+let nextId = 0;
+// 같은 문구가 연달아 와도 다시 뜨도록 메시지마다 새 id를 붙인다
+export function toastMessage(text: string, tone: ToastMessage["tone"]): ToastMessage {
+  nextId += 1;
+  return { id: nextId, text, tone };
+}
+
 type ToastProps = {
   message: ToastMessage | null;
   onDismiss: () => void;
