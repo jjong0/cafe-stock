@@ -310,7 +310,7 @@ docs/
 
 ### 2주차 — 사장님 화면과 브리핑
 - [x] T8. `GET /api/issues`, `PATCH /api/issues/[id]`
-- [ ] T9. 사장님 이슈 목록 UI (필터, 상태 변경, 보고 내역)
+- [x] T9. 사장님 이슈 목록 UI (필터, 상태 변경, 보고 내역)
 - [ ] T10. `lib/rate-limit.ts`
 - [ ] T11. 브리핑 facts 집계 + 해시
 - [ ] T12. `POST /api/briefing` (Claude 호출, 검증, 캐시)
