@@ -140,12 +140,13 @@ create table api_usage (
 | 대상 | 한도 | `api_usage.key` |
 |---|---|---|
 | 세션당 AI 호출 | 하루 20회 | `ai:session:<id>` |
-| 전체 AI 호출 | 하루 500회 | `ai:global` |
+| 전체 AI 호출 | 하루 450회 | `ai:global` |
 | 세션당 보고 제출 | 하루 100회 | `report:session:<id>` |
 
 - 키는 용도별로 나눈다. 세션 키를 하나로 쓰면 보고 제출이 AI 호출 한도를 함께 소진한다
 
-- 전체 한도가 실제 비용 보호 장치 (세션 쿠키는 삭제하면 초기화되므로)
+- 전체 한도가 실제 보호 장치 (세션 쿠키는 삭제하면 초기화되므로). Gemini 무료 플랜 하루 500회보다 낮게 두고, 제공자 기준에 맞춰 미국 태평양 시간 날짜로 센다
+- 세션 한도를 먼저 확인하고 통과했을 때만 전체 한도를 센다 (막힌 세션이 전체 한도를 소진하지 않게)
 - 초과 시 `429` + `{ error: { code: 'RATE_LIMITED', message } }`
 - 브리핑 캐시 적중 시에는 호출 횟수를 차감하지 않는다
 
@@ -157,8 +158,8 @@ create table api_usage (
    - 반복 품목: 최근 7일 보고가 3회 이상인 품목과 횟수
    - 오늘 처리완료된 품목
 2. facts를 정렬된 JSON으로 만들어 해시 → `briefings` 캐시 조회 → 있으면 반환
-3. 없으면 호출 제한 확인 → Claude 호출 (`generateObject` + 스키마)
-4. 검증: Zod 통과 + **모든 `itemId`가 facts에 존재**하는지 확인. 없는 항목은 제거. Zod 실패 시 1회 재시도, 그래도 실패하면 오류 응답
+3. 없으면 호출 제한 확인 → Gemini 호출 (`generateText` + `Output.object`)
+4. 검증: Zod 통과 + **모든 `itemId`가 facts에 존재**하는지 확인. 없는 항목은 제거. Zod 실패 시 1회 재시도(재시도도 호출 횟수로 센다), 그래도 실패하면 오류 응답
 5. 저장 후 반환. 화면의 품목명은 DB 값으로 표시
 
 ### 출력 스키마
@@ -187,7 +188,7 @@ const BriefingSchema = z.object({
 ## 8. AI ② 자연어 통계
 
 ### 흐름
-1. 질문 + 오늘 날짜 + 품목 목록(id, 이름, 카테고리)을 Claude에 전달
+1. 질문 + 오늘 날짜 + 품목 목록(id, 이름, 카테고리)을 Gemini에 전달
 2. `ChartSpec` 반환 → Zod 검증, `itemIds`가 실제 품목인지 확인
 3. `supported: false`면 이유와 추천 질문 반환
 4. 서버 코드가 spec대로 집계 (`src/features/stats/aggregate.ts`)
@@ -249,7 +250,7 @@ const ChartSpecSchema = z.discriminatedUnion('supported', [
 ```
 NEXT_PUBLIC_SUPABASE_URL=        # 서버에서만 사용하지만 URL은 공개돼도 무방
 SUPABASE_SERVICE_ROLE_KEY=       # 서버 전용, 절대 클라이언트 노출 금지
-ANTHROPIC_API_KEY=               # 서버 전용
+GOOGLE_GENERATIVE_AI_API_KEY=    # 서버 전용 (Gemini 무료 플랜, 결제 미연결)
 ```
 
 ## 12. 폴더 구조
@@ -313,7 +314,7 @@ docs/
 - [x] T9. 사장님 이슈 목록 UI (필터, 상태 변경, 보고 내역)
 - [x] T10. `lib/rate-limit.ts`
 - [x] T11. 브리핑 facts 집계 + 해시
-- [ ] T12. `POST /api/briefing` (Claude 호출, 검증, 캐시)
+- [ ] T12. `POST /api/briefing` (Gemini 호출, 검증, 캐시)
 - [ ] T13. 브리핑 카드 UI (스켈레톤, 오류, 우선순위 클릭 스크롤)
 
 ### 3주차 — 통계와 배포

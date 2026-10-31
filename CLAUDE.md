@@ -12,7 +12,7 @@
 - Next.js (App Router) + TypeScript (strict)
 - Tailwind CSS
 - Supabase (Postgres) — 서버에서만 접근
-- Claude API — Vercel AI SDK (`ai`, `@ai-sdk/anthropic`)
+- Gemini API (무료 플랜) — Vercel AI SDK (`ai`, `@ai-sdk/google`)
 - Zod — 요청 본문, AI 응답 검증
 - Recharts — 통계 차트
 - 배포: Vercel
@@ -53,7 +53,7 @@ npm run typecheck  # tsc --noEmit
 ## 금지 사항
 
 - 브라우저에서 Supabase 직접 접근 금지. DB 접근은 `src/lib/supabase/server.ts`를 통해 서버에서만.
-- `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`를 클라이언트 코드나 `NEXT_PUBLIC_` 환경 변수로 노출 금지.
+- `SUPABASE_SERVICE_ROLE_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY`를 클라이언트 코드나 `NEXT_PUBLIC_` 환경 변수로 노출 금지.
 - AI 응답을 Zod 검증 없이 사용 금지.
 - AI가 숫자(집계값, 보고 횟수 등)를 생성하게 하지 않는다. 숫자는 항상 코드가 DB에서 계산한다.
 - AI가 반환한 품목명을 그대로 화면에 쓰지 않는다. `itemId`로 받아 DB의 품목명을 표시한다.
