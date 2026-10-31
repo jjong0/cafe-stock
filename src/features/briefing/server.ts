@@ -17,13 +17,15 @@ export type BriefingView = {
 export type BriefingResult = { briefing: BriefingView; cached: boolean; generatedAt: string };
 
 const MAX_ATTEMPTS = 2; // 설계: Zod 검증 실패 시 1회 재시도
+// 실제 응답은 2초 안팎이라 넉넉히 두되, 제공자가 멈춰도 요청이 서버 실행 시간 끝까지 붙잡히지 않게 한다
+const AI_TIMEOUT_MS = 15_000;
 
 export async function getBriefing(sessionId: string): Promise<BriefingResult> {
   const facts = await buildFacts(sessionId);
   const factsHash = hashFacts(facts);
 
   // 캐시 적중이면 AI를 부르지 않고 호출 횟수도 차감하지 않는다
-  const cached = await readCache(sessionId, factsHash);
+  const cached = await readCache(factsHash);
   if (cached) return { briefing: toView(cached.content, facts), cached: true, generatedAt: cached.generatedAt };
 
   const content = keepKnownItems(await generateBriefing(sessionId, facts), facts);
@@ -45,6 +47,7 @@ async function generateBriefing(sessionId: string, facts: BriefingFacts): Promis
         output: Output.object({ schema: BriefingSchema }),
         // SDK 자동 재시도를 끄고 위의 1회 재시도만 둬서, 실제 호출 수와 카운트가 같게 한다
         maxRetries: 0,
+        abortSignal: AbortSignal.timeout(AI_TIMEOUT_MS),
       });
       return output;
     } catch (err) {
@@ -86,12 +89,15 @@ function toView(briefing: Briefing, facts: BriefingFacts): BriefingView {
   };
 }
 
-async function readCache(sessionId: string, factsHash: string) {
+// 브리핑은 facts만으로 정해지고 facts에는 세션 정보가 없어, 해시가 같으면 다른 세션의 브리핑을 써도 된다.
+// 새 방문자들은 facts가 같아(시드 반복 품목뿐) 세션을 바꿔가며 AI 한도를 소진하는 요청도 캐시에 걸린다
+async function readCache(factsHash: string) {
   const { data, error } = await getSupabase()
     .from("briefings")
     .select("content, generated_at")
-    .eq("session_id", sessionId)
     .eq("facts_hash", factsHash)
+    .order("generated_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
   if (error) throw error;
   if (!data) return null;
