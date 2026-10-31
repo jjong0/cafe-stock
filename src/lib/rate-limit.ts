@@ -4,8 +4,9 @@ import { getSupabase } from "./supabase/server";
 
 export const REPORT_LIMIT_PER_SESSION = 100;
 export const AI_LIMIT_PER_SESSION = 20;
-// 세션 쿠키는 지우면 초기화되므로 실제 비용을 막는 건 이 전체 한도다
-export const AI_LIMIT_GLOBAL = 500;
+// Gemini 무료 플랜 하루 500회(RPD)보다 낮게 둬서, 제공자 한도보다 우리 한도에서 먼저 막고 안내한다.
+// 세션 쿠키는 지우면 초기화되므로 실제 한도를 지키는 건 이 전체 한도다
+export const AI_LIMIT_GLOBAL = 450;
 
 export const rateLimitKey = {
   reportSession: (sessionId: string) => `report:session:${sessionId}`,
@@ -20,11 +21,22 @@ export function todayKst(now: Date = new Date()): string {
   return new Date(now.getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
 }
 
+// Gemini의 하루 한도는 미국 태평양 시간 자정에 초기화되므로 전체 한도는 그 날짜로 센다
+const pacificDate = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles" });
+export function todayPacific(now: Date = new Date()): string {
+  return pacificDate.format(now);
+}
+
 // 카운트를 올리고 한도를 넘었으면 429를 던진다. 한도를 넘긴 시도도 카운트된다.
-export async function checkRateLimit(key: string, limit: number, message: string = DEFAULT_MESSAGE): Promise<void> {
+export async function checkRateLimit(
+  key: string,
+  limit: number,
+  message: string = DEFAULT_MESSAGE,
+  day: string = todayKst(),
+): Promise<void> {
   const { data, error } = await getSupabase().rpc("increment_usage", {
     p_key: key,
-    p_day: todayKst(),
+    p_day: day,
     p_limit: limit,
   });
   if (error) throw error;
@@ -49,5 +61,6 @@ export async function checkAiRateLimit(sessionId: string): Promise<void> {
     rateLimitKey.aiGlobal(),
     AI_LIMIT_GLOBAL,
     "오늘 전체 AI 사용량이 한도에 도달했습니다. 내일 다시 시도해 주세요.",
+    todayPacific(),
   );
 }
