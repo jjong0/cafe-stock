@@ -314,7 +314,7 @@ docs/
 - [x] T9. 사장님 이슈 목록 UI (필터, 상태 변경, 보고 내역)
 - [x] T10. `lib/rate-limit.ts`
 - [x] T11. 브리핑 facts 집계 + 해시
-- [ ] T12. `POST /api/briefing` (Gemini 호출, 검증, 캐시)
+- [x] T12. `POST /api/briefing` (Gemini 호출, 검증, 캐시)
 - [ ] T13. 브리핑 카드 UI (스켈레톤, 오류, 우선순위 클릭 스크롤)
 
 ### 3주차 — 통계와 배포
