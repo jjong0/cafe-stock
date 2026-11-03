@@ -316,7 +316,7 @@ docs/
 - [x] T10. `lib/rate-limit.ts`
 - [x] T11. 브리핑 facts 집계 + 해시
 - [x] T12. `POST /api/briefing` (Gemini 호출, 검증, 캐시)
-- [ ] T13. 브리핑 카드 UI (스켈레톤, 오류, 우선순위 클릭 스크롤)
+- [x] T13. 브리핑 카드 UI (스켈레톤, 오류, 우선순위 클릭 스크롤)
 
 ### 3주차 — 통계와 배포
 - [ ] T14. `aggregate.ts` (지표 3종 × groupBy 4종) + 단위 테스트
