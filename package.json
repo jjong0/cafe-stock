@@ -9,7 +9,8 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "seed": "node --env-file=.env.local scripts/seed.ts",
-    "db:types": "supabase gen types typescript --local --schema public > src/lib/supabase/database.types.ts"
+    "db:types": "supabase gen types typescript --local --schema public > src/lib/supabase/database.types.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.109",
@@ -29,7 +30,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.12"
   },
   "type": "module"
 }
