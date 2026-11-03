@@ -24,9 +24,10 @@ npm run dev        # 개발 서버
 npm run build      # 프로덕션 빌드
 npm run lint       # ESLint
 npm run typecheck  # tsc --noEmit
+npm test           # Vitest 단위 테스트 (src/**/*.test.ts)
 ```
 
-작업을 마치면 `npm run typecheck`와 `npm run lint`를 실행하고 결과를 알려준다.
+작업을 마치면 `npm run typecheck`와 `npm run lint`를 실행하고 결과를 알려준다. 테스트가 있는 코드를 바꿨으면 `npm test`도 실행한다.
 
 ## 작업 방식 (중요)
 
