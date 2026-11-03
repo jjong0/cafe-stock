@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { Button } from "@/components/ui/Button";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Toast, toastMessage, type ToastMessage } from "@/components/ui/Toast";
+import { BriefingCard } from "@/features/briefing/components/BriefingCard";
 import { ApiClientError } from "@/lib/api-client";
 import { cx } from "@/lib/cx";
 import { useIssues } from "../hooks/useIssues";
@@ -19,6 +21,8 @@ export function OwnerIssuesView({ initialIssues, serverNow }: { initialIssues: I
   const [filter, setFilter] = useState<IssueFilter>("all");
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const now = useNow(serverNow);
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
+  const highlightTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // 필터는 이미 받은 미처리 이슈를 화면에서 나눈다. 개수를 버튼에 바로 보여줄 수 있다
   const counts = useMemo(
@@ -39,6 +43,22 @@ export function OwnerIssuesView({ initialIssues, serverNow }: { initialIssues: I
   const showError = (err: unknown) =>
     setToast(toastMessage(err instanceof ApiClientError ? err.message : "요청을 처리하지 못했습니다.", "error"));
 
+  // 브리핑의 우선순위 항목을 누르면 해당 이슈 행으로 이동해 잠깐 강조한다
+  function showItem(itemId: string) {
+    const issue = issues.find((item) => item.itemId === itemId);
+    if (!issue) {
+      setToast(toastMessage("이미 처리된 이슈입니다. 새로고침하면 목록이 맞춰집니다.", "success"));
+      return;
+    }
+    // 필터에 가려진 행이면 전체로 바꾸고, 바뀐 목록이 그려진 뒤에 스크롤해야 해서 즉시 렌더링한다
+    if (filter !== "all" && issue.status !== filter) flushSync(() => setFilter("all"));
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(`issue-${issue.id}`)?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+    setHighlightedId(issue.id);
+    clearTimeout(highlightTimer.current);
+    highlightTimer.current = setTimeout(() => setHighlightedId(null), 2000);
+  }
+
   async function handleAction(issueId: string, action: IssueAction) {
     try {
       const issue = await transition(issueId, action);
@@ -53,7 +73,9 @@ export function OwnerIssuesView({ initialIssues, serverNow }: { initialIssues: I
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 pt-6 pb-16">
-      <header className="flex flex-wrap items-center justify-between gap-3">
+      <BriefingCard onSelectItem={showItem} />
+
+      <header className="mt-8 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-[22px] font-bold">미처리 이슈</h1>
         <div className="flex items-center gap-2">
           <SegmentedControl label="상태 필터" options={filterOptions} value={filter} onChange={setFilter} size="sm" />
@@ -81,6 +103,7 @@ export function OwnerIssuesView({ initialIssues, serverNow }: { initialIssues: I
                 issue={issue}
                 now={now}
                 pending={pendingId === issue.id}
+                highlighted={highlightedId === issue.id}
                 onAction={(action) => handleAction(issue.id, action)}
               />
             ))}

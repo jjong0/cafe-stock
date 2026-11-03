@@ -14,17 +14,24 @@ type IssueRowProps = {
   issue: Issue;
   now: number;
   pending: boolean;
+  highlighted?: boolean;
   onAction: (action: IssueAction) => void;
 };
 
-export function IssueRow({ issue, now, pending, onAction }: IssueRowProps) {
+export function IssueRow({ issue, now, pending, highlighted = false, onAction }: IssueRowProps) {
   const [open, setOpen] = useState(false);
   const elapsed = formatElapsed(issue.openedAt, now);
   const longWait = isLongWait(issue.openedAt, now);
   const reportsId = `reports-${issue.id}`;
 
   return (
-    <li id={`issue-${issue.id}`} className="border-b border-line py-3.5 last:border-b-0">
+    <li
+      id={`issue-${issue.id}`}
+      className={cx(
+        "scroll-mt-24 border-b border-line py-3.5 transition-colors duration-700 last:border-b-0",
+        highlighted && "bg-low-soft",
+      )}
+    >
       <div className={cx("grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1", ISSUE_GRID)}>
         <div className="min-w-0">
           <p className="flex items-center gap-2">
