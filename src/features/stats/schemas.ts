@@ -26,3 +26,17 @@ export const AggregateResultSchema = z.object({
   clamped: z.boolean(),
 });
 export type AggregateResult = z.infer<typeof AggregateResultSchema>;
+
+// POST /api/stats/query 응답. 브라우저에서도 외부 입력으로 보고 검증한다
+export const SupportedSpecSchema = AggregateSpecSchema.extend({
+  supported: z.literal(true),
+  chartType: z.enum(["bar", "line"]),
+  title: z.string(),
+});
+export type SupportedSpecView = z.infer<typeof SupportedSpecSchema>;
+
+export const StatsQueryResponseSchema = z.union([
+  z.object({ spec: SupportedSpecSchema, data: AggregateResultSchema, source: z.enum(["preset", "ai"]) }),
+  z.object({ spec: z.object({ supported: z.literal(false), reason: z.string() }), suggestions: z.array(z.string()) }),
+]);
+export type StatsQueryResponse = z.infer<typeof StatsQueryResponseSchema>;
