@@ -86,10 +86,13 @@ export function aggregate(spec: AggregateSpec, data: AggregateData): AggregateRe
 
   let rows: AggregateResult["rows"];
   switch (spec.groupBy) {
-    case "item":
-      // 25개 품목을 0으로 다 늘어놓지 않도록 데이터가 있는 품목만 보여준다
-      rows = [...buckets.keys()].map((key) => ({ key, label: itemById.get(key)?.name ?? key, value: valueOf(key) }));
+    case "item": {
+      // 25개 품목을 0으로 다 늘어놓지 않도록 데이터가 있는 품목만 보여준다.
+      // 단, 특정 품목을 물었으면("우유 품절 몇 번?") 기록이 없어도 0으로 답해야 해서 그 품목은 넣는다
+      const keys = new Set([...buckets.keys(), ...(spec.itemIds ?? []).filter((id) => itemById.has(id))]);
+      rows = [...keys].map((key) => ({ key, label: itemById.get(key)?.name ?? key, value: valueOf(key) }));
       break;
+    }
     case "category":
       rows = CATEGORY_OPTIONS.map((option) => ({ key: option.value, label: option.label, value: valueOf(option.value) }));
       break;

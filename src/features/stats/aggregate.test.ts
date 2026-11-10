@@ -88,6 +88,13 @@ describe("report_count", () => {
     expect(rows[0].label).toBe("10/05");
   });
 
+  it("특정 품목을 물으면 기록이 없어도 그 품목을 0으로 보여준다", () => {
+    expect(aggregate(spec({ groupBy: "item", itemIds: [MILK, HOLDER] }), data).rows).toEqual([
+      { key: MILK, label: "우유", value: 3 },
+      { key: HOLDER, label: "컵홀더", value: 0 },
+    ]);
+  });
+
   it("itemIds가 있으면 그 품목만 센다", () => {
     expect(aggregate(spec({ groupBy: "date", itemIds: [VANILLA] }), data).rows.map((row) => row.value)).toEqual([0, 1, 0, 0, 1, 0, 0]);
   });
