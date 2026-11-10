@@ -189,6 +189,7 @@ const BriefingSchema = z.object({
 ## 8. AI ② 자연어 통계
 
 ### 흐름
+0. 추천 질문 3개는 AI 없이 코드에 고정된 조건으로 바로 집계한다 (호출 차감 없음, 같은 질문 반복으로 한도를 소진하지 않게)
 1. 질문 + 오늘 날짜 + 품목 목록(id, 이름, 카테고리)을 Gemini에 전달
 2. `ChartSpec` 반환 → Zod 검증, `itemIds`가 실제 품목인지 확인
 3. `supported: false`면 이유와 추천 질문 반환
