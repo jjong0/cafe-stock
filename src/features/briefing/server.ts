@@ -1,6 +1,7 @@
 import "server-only";
 import { APICallError, generateText, NoObjectGeneratedError, Output } from "ai";
 import { getModel } from "@/lib/ai/client";
+import { withAiRetry } from "@/lib/ai/retry";
 import { buildBriefingPrompt, BRIEFING_SYSTEM } from "@/lib/ai/prompts";
 import { BriefingSchema, type Briefing } from "@/lib/ai/schemas";
 import { AppError } from "@/lib/errors";
@@ -16,7 +17,6 @@ export type BriefingView = {
 
 export type BriefingResult = { briefing: BriefingView; cached: boolean; generatedAt: string };
 
-const MAX_ATTEMPTS = 2; // 설계: Zod 검증 실패 시 1회 재시도
 // 실제 응답은 2초 안팎이라 넉넉히 두되, 제공자가 멈춰도 요청이 서버 실행 시간 끝까지 붙잡히지 않게 한다
 const AI_TIMEOUT_MS = 15_000;
 
@@ -36,33 +36,34 @@ export async function getBriefing(sessionId: string): Promise<BriefingResult> {
 async function generateBriefing(sessionId: string, facts: BriefingFacts): Promise<Briefing> {
   // 설정 오류(키 없음)는 호출 횟수를 차감하기 전에 드러나게 모델을 먼저 만든다
   const model = getModel();
-  for (let attempt = 1; ; attempt++) {
-    // 재시도도 실제 API 호출이라 매번 호출 제한을 센다
-    await checkAiRateLimit(sessionId);
-    try {
-      const { output } = await generateText({
-        model,
-        system: BRIEFING_SYSTEM,
-        prompt: buildBriefingPrompt(facts),
-        output: Output.object({ schema: BriefingSchema }),
-        // SDK 자동 재시도를 끄고 위의 1회 재시도만 둬서, 실제 호출 수와 카운트가 같게 한다
-        maxRetries: 0,
-        abortSignal: AbortSignal.timeout(AI_TIMEOUT_MS),
-      });
-      return output;
-    } catch (err) {
-      if (NoObjectGeneratedError.isInstance(err)) {
-        if (attempt < MAX_ATTEMPTS) continue;
-        console.error("briefing schema validation failed twice", err.text);
-        throw new AppError("AI_ERROR", "브리핑을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.", 502);
-      }
-      // 제공자 429는 대개 분당 한도(15회)라 '오늘 한도'가 아니라 잠시 후 재시도로 안내한다
-      if (APICallError.isInstance(err) && err.statusCode === 429) {
-        throw new AppError("RATE_LIMITED", "요청이 많아 잠시 처리할 수 없습니다. 잠시 후 다시 시도해 주세요.", 429);
-      }
-      console.error("briefing generation failed", err);
-      throw new AppError("AI_ERROR", "AI 서비스에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.", 502);
+  try {
+    // 매 시도 직전에 호출 제한을 센다. 재시도 규칙은 withAiRetry에 모아 두었다
+    return await withAiRetry(
+      async () => {
+        const { output } = await generateText({
+          model,
+          system: BRIEFING_SYSTEM,
+          prompt: buildBriefingPrompt(facts),
+          output: Output.object({ schema: BriefingSchema }),
+          maxRetries: 0,
+          abortSignal: AbortSignal.timeout(AI_TIMEOUT_MS),
+        });
+        return output;
+      },
+      { beforeAttempt: () => checkAiRateLimit(sessionId) },
+    );
+  } catch (err) {
+    if (err instanceof AppError) throw err;
+    if (NoObjectGeneratedError.isInstance(err)) {
+      console.error("briefing schema validation failed twice", err.text);
+      throw new AppError("AI_ERROR", "브리핑을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.", 502);
     }
+    // 제공자 429는 대개 분당 한도(15회)라 '오늘 한도'가 아니라 잠시 후 재시도로 안내한다
+    if (APICallError.isInstance(err) && err.statusCode === 429) {
+      throw new AppError("RATE_LIMITED", "요청이 많아 잠시 처리할 수 없습니다. 잠시 후 다시 시도해 주세요.", 429);
+    }
+    console.error("briefing generation failed", err);
+    throw new AppError("AI_ERROR", "AI 서비스에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.", 502);
   }
 }
 
