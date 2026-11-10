@@ -321,7 +321,7 @@ docs/
 
 ### 3주차 — 통계와 배포
 - [x] T14. `aggregate.ts` (지표 3종 × groupBy 4종) + 단위 테스트
-- [ ] T15. `POST /api/stats/query`
+- [x] T15. `POST /api/stats/query`
 - [ ] T16. 통계 화면 UI (질문 입력, 추천 칩, 해석 결과, 차트)
 - [ ] T17. 역할 전환 헤더, 소개 페이지, 반응형 점검
 - [ ] T18. Vercel 배포, 환경 변수, 호출 제한 실동작 확인
