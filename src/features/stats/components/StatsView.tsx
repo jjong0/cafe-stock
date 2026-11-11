@@ -26,7 +26,7 @@ export function StatsView() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 pt-6 pb-16">
+    <div className="mx-auto w-full max-w-4xl px-4 pt-6 pb-16">
       <h1 className="text-[22px] font-bold">재고 통계</h1>
       <p className="mt-1 text-[15px] text-fg-sub">궁금한 것을 물어보면 지난 기록을 집계해 차트로 보여줍니다.</p>
 
