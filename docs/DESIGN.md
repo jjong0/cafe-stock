@@ -140,13 +140,16 @@ create table api_usage (
 | 대상 | 한도 | `api_usage.key` |
 |---|---|---|
 | 세션당 AI 호출 | 하루 20회 | `ai:session:<id>` |
+| IP당 AI 호출 | 하루 40회 | `ai:ip:<해시>` |
 | 전체 AI 호출 | 하루 450회 | `ai:global` |
 | 세션당 보고 제출 | 하루 100회 | `report:session:<id>` |
+| IP당 보고 제출 | 하루 300회 | `report:ip:<해시>` |
 
 - 키는 용도별로 나눈다. 세션 키를 하나로 쓰면 보고 제출이 AI 호출 한도를 함께 소진한다
 
 - 전체 한도가 실제 보호 장치 (세션 쿠키는 삭제하면 초기화되므로). Gemini 무료 플랜 하루 500회보다 낮게 두고, 제공자 기준에 맞춰 미국 태평양 시간 날짜로 센다
-- 세션 한도를 먼저 확인하고 통과했을 때만 전체 한도를 센다 (막힌 세션이 전체 한도를 소진하지 않게)
+- 세션 → IP → 전체 순서로 확인한다 (막힌 세션이 다음 단계 한도를 소진하지 않게)
+- IP 원문은 저장하지 않는다. 서버 비밀키 HMAC + 날짜로 만든 해시만 키로 쓴다. IP를 알 수 없으면(로컬) IP 단계는 건너뛴다
 - 초과 시 `429` + `{ error: { code: 'RATE_LIMITED', message } }`
 - 브리핑 캐시 적중 시에는 호출 횟수를 차감하지 않는다
 
@@ -294,6 +297,8 @@ supabase/
 └─ migrations/                   # 스키마, RPC
 scripts/
 └─ seed.ts
+.github/workflows/
+└─ refresh-seed.yml               # 매일 시드 갱신(최근 30일 유지, Supabase 일시정지 방지)
 docs/
 └─ DESIGN.md
 ```
