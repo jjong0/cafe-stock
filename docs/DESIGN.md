@@ -299,6 +299,7 @@ scripts/
 └─ seed.ts
 .github/workflows/
 └─ refresh-seed.yml               # 매일 시드 갱신(최근 30일 유지, Supabase 일시정지 방지)
+vercel.json                      # 함수 실행 지역을 서울(icn1)로 고정 (Supabase와 같은 지역)
 docs/
 └─ DESIGN.md
 ```
@@ -329,7 +330,7 @@ docs/
 - [x] T15. `POST /api/stats/query`
 - [x] T16. 통계 화면 UI (질문 입력, 추천 칩, 해석 결과, 차트)
 - [x] T17. 역할 전환 헤더, 소개 페이지, 반응형 점검
-- [ ] T18. Vercel 배포, 환경 변수, 호출 제한 실동작 확인
+- [x] T18. Vercel 배포, 환경 변수, 호출 제한 실동작 확인
 
 ### 4주차 — 정리
 - [ ] T19. 코드 리뷰와 리팩터링 (사용자 주도)
