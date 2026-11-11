@@ -1,0 +1,28 @@
+name: 시드 데이터 갱신
+
+# 시드는 실행 시점 기준 '지난 30일'로 만들어져 시간이 지나면 통계·브리핑 데모가 비어 보인다.
+# 매일 다시 넣어 최근 30일을 유지하고, Supabase 무료 플랜이 7일 미사용으로 일시정지되는 것도 막는다.
+on:
+  schedule:
+    - cron: "0 18 * * *" # 매일 한국 시간 새벽 3시
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: 시드 다시 넣기 (공용 시드만 지우고 다시 만든다. 방문자 데이터는 건드리지 않는다)
+        run: node scripts/seed.ts
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
