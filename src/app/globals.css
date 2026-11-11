@@ -24,6 +24,9 @@ body {
   color: var(--color-fg);
   font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
+  /* 한국어는 어절 단위로 줄을 바꿔야 '확인합니/다'처럼 끊기지 않는다. 띄어쓰기 없는 긴 문자열은 그래도 넘치지 않게 끊는다 */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 :focus-visible {
